@@ -18,6 +18,19 @@ export default class App extends Component {
     filter: "",
   };
 
+  componentDidMount() {
+    const savedContacts = localStorage.getItem("contacts");
+    if (savedContacts) {
+      this.setState({ contacts: JSON.parse(savedContacts) });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
+    }
+  }
+
   handleChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
   handleSubmit = (e) => {
@@ -35,8 +48,8 @@ export default class App extends Component {
 
     const newContact = {
       id: nanoid(),
-      name: name,
-      number: number,
+      name,
+      number,
     };
 
     this.setState((prevState) => ({
@@ -65,41 +78,41 @@ export default class App extends Component {
 
   render = () => {
     const filteredContacts = this.getFilteredContacts();
-    
-   return (
-     <section className="min-h-screen bg-purple-100 p-8 flex flex-col items-center justify-center select-none">
-       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-5xl space-y-8">
-         <h1 className="text-4xl font-extrabold text-purple-900 text-center">
-           Phonebook
-         </h1>
 
-         <div className="flex w-full gap-10">
-           <div className="space-y-8 flex-1">
-             <ContactForm
-               handleSubmit={this.handleSubmit}
-               handleChange={this.handleChange}
-               name={this.state.name}
-               number={this.state.number}
-             />
-             <Filter
-               filter={this.state.filter}
-               handleChange={this.handleChange}
-             />
-           </div>
+    return (
+      <section className="min-h-screen bg-purple-100 p-8 flex flex-col items-center justify-center select-none">
+        <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-5xl space-y-8">
+          <h1 className="text-4xl font-extrabold text-purple-900 text-center">
+            Phonebook
+          </h1>
 
-           <div className="space-y-4 flex-1">
-             <h2 className="text-3xl font-extrabold text-purple-900 text-center">
-               Contacts
-             </h2>
-             <ContactList
-               filter={this.state.filter}
-               contacts={filteredContacts}
-               deleteContact={this.deleteContact}
-             />
-           </div>
-         </div>
-       </div>
-     </section>
-   );
+          <div className="flex w-full gap-10">
+            <div className="space-y-8 flex-1">
+              <ContactForm
+                handleSubmit={this.handleSubmit}
+                handleChange={this.handleChange}
+                name={this.state.name}
+                number={this.state.number}
+              />
+              <Filter
+                filter={this.state.filter}
+                handleChange={this.handleChange}
+              />
+            </div>
+
+            <div className="space-y-4 flex-1">
+              <h2 className="text-3xl font-extrabold text-purple-900 text-center">
+                Contacts
+              </h2>
+              <ContactList
+                filter={this.state.filter}
+                contacts={filteredContacts}
+                deleteContact={this.deleteContact}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
   };
 }
